@@ -1,0 +1,107 @@
+sectors:
+  rwa:
+    name: "RWA / Tokenised Credit"
+    description: "Real-world assets on-chain. Treasuries, credit, real estate."
+    token_universe: [ONDO, CFG, MPL, BUIDL]
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: "RWA"
+      coingecko_category: "real-world-assets-rwa"
+      github_repos: []
+
+  depin:
+    name: "DePIN Infrastructure"
+    description: "Decentralised physical infrastructure networks."
+    token_universe: [HNT, RENDER, DIMO]
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: null
+      coingecko_category: "decentralized-physical-infrastructure-networks-depin"
+      github_repos: []
+
+  ai_agent:
+    name: "AI Agent Infrastructure"
+    description: "Infrastructure for autonomous AI agents."
+    token_universe: [VIRTUAL, TAO, OLAS]
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: null
+      coingecko_category: "artificial-intelligence"
+      github_repos: []
+
+  da:
+    name: "Data Availability / Modular"
+    description: "Dedicated DA layers for rollups."
+    token_universe: [TIA, AVAIL]
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: null
+      coingecko_category: "data-availability"
+      github_repos: []
+    notes: "ETH native DA (PeerDAS) is competitive threat."
+
+  btc_l2:
+    name: "Bitcoin L2 / Programmability"
+    description: "Smart contract capability on Bitcoin."
+    token_universe: [STX, BABY]
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: null
+      coingecko_category: "bitcoin-layer-2"
+      github_repos: []
+
+  zk_infra:
+    name: "ZK Infrastructure"
+    description: "Zero-knowledge proof generation as a service."
+    token_universe: [PROVE]
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: null
+      coingecko_category: "zero-knowledge-zk"
+      github_repos: []
+    notes: "PROVE has major supply cliff August 2026."
+
+  stablecoin_infra:
+    name: "Stablecoin / Payments Infrastructure"
+    description: "Payment rails, stablecoin issuance, fiat-crypto bridges."
+    token_universe: []
+    structural_filters:
+      novel_capability: true
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: null
+      coingecko_category: null
+      github_repos: []
+
+  defi_infra:
+    name: "DeFi Infrastructure"
+    description: "Core DeFi protocols — lending, staking, DEXes."
+    token_universe: [AAVE, LDO, UNI, MKR]
+    structural_filters:
+      novel_capability: false
+      capital_pathway: true
+      distribution_vector: true
+    metrics_sources:
+      tvl_category: "Lending"
+      coingecko_category: "decentralized-finance-defi"
+      github_repos: []
+    notes: "Structural filter fails on novelty. Tracked because user holds AAVE and LDO. Tier capped at Ready."

@@ -1,0 +1,116 @@
+tokens:
+  ONDO:
+    name: "Ondo Finance"
+    sector: rwa
+    coingecko_id: "ondo-finance"
+    notes: ""
+  CFG:
+    name: "Centrifuge"
+    sector: rwa
+    coingecko_id: "centrifuge"
+    notes: ""
+  MPL:
+    name: "Maple"
+    sector: rwa
+    coingecko_id: "maple"
+    notes: ""
+  BUIDL:
+    name: "BlackRock USD Institutional"
+    sector: rwa
+    coingecko_id: null
+    notes: "Not tradeable as a token. Track for TVL/adoption signal only."
+  HNT:
+    name: "Helium"
+    sector: depin
+    coingecko_id: "helium"
+    notes: ""
+  RENDER:
+    name: "Render Network"
+    sector: depin
+    coingecko_id: "render-token"
+    notes: ""
+  DIMO:
+    name: "DIMO"
+    sector: depin
+    coingecko_id: "dimo"
+    notes: ""
+  VIRTUAL:
+    name: "Virtuals Protocol"
+    sector: ai_agent
+    coingecko_id: "virtuals-protocol"
+    notes: ""
+  TAO:
+    name: "Bittensor"
+    sector: ai_agent
+    coingecko_id: "bittensor"
+    notes: ""
+  OLAS:
+    name: "Autonolas"
+    sector: ai_agent
+    coingecko_id: "autonolas"
+    notes: "User is co-founder. execution_exempt."
+  TIA:
+    name: "Celestia"
+    sector: da
+    coingecko_id: "celestia"
+    notes: "Down 98% from ATH. Dilution concern. ETH DA competition."
+  AVAIL:
+    name: "Avail"
+    sector: da
+    coingecko_id: "avail"
+    notes: ""
+  STX:
+    name: "Stacks"
+    sector: btc_l2
+    coingecko_id: "blockstack"
+    notes: ""
+  BABY:
+    name: "Babylon"
+    sector: btc_l2
+    coingecko_id: "babylon"
+    notes: ""
+  PROVE:
+    name: "Succinct"
+    sector: zk_infra
+    coingecko_id: "succinct"
+    notes: "Supply cliff August 2026. 80% of supply still locked."
+  AAVE:
+    name: "Aave"
+    sector: defi_infra
+    coingecko_id: "aave"
+    notes: "User holds. TradFi entry thesis."
+  LDO:
+    name: "Lido DAO"
+    sector: defi_infra
+    coingecko_id: "lido-dao"
+    notes: "User holds. Thesis weakening."
+  UNI:
+    name: "Uniswap"
+    sector: defi_infra
+    coingecko_id: "uniswap"
+    notes: "Tracked for sector context. User does not hold."
+  MKR:
+    name: "Maker"
+    sector: defi_infra
+    coingecko_id: "maker"
+    notes: "Tracked for sector context. User does not hold."
+  BTC:
+    name: "Bitcoin"
+    sector: null
+    coingecko_id: "bitcoin"
+    notes: "Core. Not a sector bet."
+  ETH:
+    name: "Ethereum"
+    sector: null
+    coingecko_id: "ethereum"
+    notes: "Core. Not a sector bet."
+  SOL:
+    name: "Solana"
+    sector: null
+    coingecko_id: "solana"
+    notes: "Core. Not a sector bet."
+  ZORA:
+    name: "Zora"
+    sector: null
+    coingecko_id: "zora"
+    notes: "User holds. No conviction. Marked for sale."

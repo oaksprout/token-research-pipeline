@@ -1,0 +1,125 @@
+last_updated: "2026-03-26"
+
+holdings:
+  - symbol: BTC
+    bucket: core
+    current_units: 0.5
+    cost_basis_usd: 25000
+    pilot_target_pct: null
+    scale_target_pct: null
+    max_position_pct: null
+    thesis: "Base layer. Hold through cycle. Re-add when regime = improving."
+    thesis_status: intact
+    invalidation: "None — permanent hold."
+    execution_exempt: false
+    can_add: true
+
+  - symbol: ETH
+    bucket: core
+    current_units: 5.0
+    cost_basis_usd: 1200
+    pilot_target_pct: null
+    scale_target_pct: null
+    max_position_pct: null
+    thesis: "Base layer. Bought at bottom, sold 60%, holding remainder."
+    thesis_status: intact
+    invalidation: "None — permanent hold."
+    execution_exempt: false
+    can_add: true
+
+  - symbol: SOL
+    bucket: core
+    current_units: 50
+    cost_basis_usd: 20
+    pilot_target_pct: null
+    scale_target_pct: null
+    max_position_pct: null
+    thesis: "Base layer. Bought at bottom, sold 60%, holding remainder."
+    thesis_status: intact
+    invalidation: "None — permanent hold."
+    execution_exempt: false
+    can_add: true
+
+  - symbol: AAVE
+    bucket: active
+    current_units: 10
+    cost_basis_usd: 180
+    pilot_target_pct: 0.05
+    scale_target_pct: 0.15
+    max_position_pct: 0.15
+    thesis: "TradFi entry into DeFi. Battle-tested protocol with real revenue."
+    thesis_status: intact
+    invalidation: "If institutional DeFi adoption stalls for 12+ months, or competitor captures the flow."
+    execution_exempt: false
+    can_add: true
+
+  - symbol: LDO
+    bucket: active
+    current_units: 500
+    cost_basis_usd: 2.50
+    pilot_target_pct: 0.03
+    scale_target_pct: 0.10
+    max_position_pct: 0.10
+    thesis: "Liquid staking adoption — weakening. Competitive pressure on Lido dominance."
+    thesis_status: weakening
+    invalidation: "Lido market share drops below 20%. Already approaching."
+    execution_exempt: false
+    can_add: false
+
+  - symbol: ZORA
+    bucket: active
+    current_units: 1000
+    cost_basis_usd: 0.05
+    pilot_target_pct: null
+    scale_target_pct: null
+    max_position_pct: null
+    thesis: "None. Conviction gone. Sell."
+    thesis_status: invalidated
+    invalidation: "Already invalidated."
+    execution_exempt: false
+    can_add: false
+
+  - symbol: TIA
+    bucket: active
+    current_units: 200
+    cost_basis_usd: 8.00
+    pilot_target_pct: 0.05
+    scale_target_pct: 0.10
+    max_position_pct: 0.10
+    thesis: "Modular DA. Technically sound. Challenged by ETH native DA. Heavily diluted."
+    thesis_status: intact
+    invalidation: "If Ethereum PeerDAS makes external DA economically unviable."
+    execution_exempt: false
+    can_add: true
+
+  - symbol: PROVE
+    bucket: active
+    current_units: 5000
+    cost_basis_usd: 0.80
+    pilot_target_pct: 0.03
+    scale_target_pct: 0.08
+    max_position_pct: 0.08
+    thesis: "ZK proving infra. Strong tech adoption (90% rollup market via OP Stack). Supply cliff August 2026."
+    thesis_status: intact
+    invalidation: "Post-cliff supply overwhelms demand. Or competing zkVMs capture share."
+    execution_exempt: false
+    can_add: true
+
+  - symbol: OLAS
+    bucket: constrained
+    current_units: 10000
+    cost_basis_usd: 0
+    pilot_target_pct: null
+    scale_target_pct: null
+    max_position_pct: null
+    thesis: "Co-founder. Cannot sell."
+    thesis_status: intact
+    invalidation: "N/A"
+    execution_exempt: true
+    can_add: false
+
+targets:
+  pilot_default_pct: 0.05
+  scale_default_pct: 0.15
+  max_sectors: 3
+  cash_reserve_pct: 0.10
