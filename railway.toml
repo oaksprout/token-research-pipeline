@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm ci"
+
+[deploy]
+# RAILWAY_START_CMD is set per-service in Railway dashboard / setup script
+# daily-ingest:   npx tsx src/daily.ts
+# weekly-scoring: npx tsx src/weekly.ts
+startCommand = "npx tsx $RAILWAY_START_CMD"
+restartPolicyType = "never"
