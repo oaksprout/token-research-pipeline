@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import postgres from 'postgres';
 import * as schema from './schema.js';
 import { runLog } from './schema.js';
+import { setRunId } from '../lib/trace.js';
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -20,6 +21,9 @@ export async function logRun(
     .insert(runLog)
     .values({ script: scriptName })
     .returning({ id: runLog.id });
+
+  // Enable tracing for this run
+  setRunId(row.id);
 
   const errors: string[] = [];
   let status = 'success';
@@ -39,6 +43,9 @@ export async function logRun(
       errors: errors.length > 0 ? JSON.stringify(errors) : null,
     })
     .where(eq(runLog.id, row.id));
+
+  // Clear trace context
+  setRunId('');
 }
 
 export async function closeDb(): Promise<void> {

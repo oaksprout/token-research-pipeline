@@ -1,5 +1,6 @@
 import { eq, and, desc, lt } from 'drizzle-orm';
 import { db } from '../db/client.js';
+import { trace } from '../lib/trace.js';
 import {
   sectorScoresWeekly,
   tierRecommendationsWeekly,
@@ -100,6 +101,11 @@ export async function applyDecisionRules(): Promise<void> {
     };
 
     const rec = computeTierRecommendation(ctx);
+
+    await trace('engine', `tier_decision_${sectorKey}`, 'decision', {
+      context: ctx,
+      recommendation: rec,
+    });
 
     await db
       .insert(tierRecommendationsWeekly)

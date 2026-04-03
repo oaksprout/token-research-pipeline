@@ -3,6 +3,7 @@ import { db } from '../db/client.js';
 import { marketDaily, flowsDaily } from '../db/schema.js';
 import { fetchWithRetry, rateLimitedSleep } from '../lib/api.js';
 import { computeSma, computeRsi } from './indicators.js';
+import { trace } from '../lib/trace.js';
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -140,6 +141,7 @@ export async function ingestMarket(): Promise<void> {
   console.log(`[ingest_market] Starting for ${date}`);
 
   // Fetch all data sources in parallel where possible
+  const fetchStart = Date.now();
   const [coreMarket, globalMarket, fundingRate, openInterest, stablecoinMcap] =
     await Promise.all([
       fetchCoreMarket(),
@@ -148,6 +150,25 @@ export async function ingestMarket(): Promise<void> {
       fetchOpenInterest(),
       fetchStablecoinMcap(),
     ]);
+
+  await trace('ingest', 'fetch_market_data', 'api_call', {
+    sources: {
+      coingecko_prices: coreMarket != null,
+      coingecko_global: globalMarket != null,
+      binance_funding: fundingRate != null,
+      binance_oi: openInterest != null,
+      defillama_stablecoin: stablecoinMcap != null,
+    },
+    data: {
+      btcPrice: coreMarket?.btcPrice,
+      ethPrice: coreMarket?.ethPrice,
+      solPrice: coreMarket?.solPrice,
+      btcDominance: globalMarket?.btcDominance,
+      fundingRate,
+      openInterest,
+      stablecoinMcap,
+    },
+  }, Date.now() - fetchStart);
 
   // Compute ratios
   const ethBtcRatio =

@@ -179,3 +179,14 @@ export const runLog = pgTable('run_log', {
   status: text('status'),
   errors: text('errors'),
 });
+
+export const runTrace = pgTable('run_trace', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  runId: uuid('run_id').notNull(),
+  timestamp: timestamp('timestamp').defaultNow(),
+  phase: text('phase').notNull(),         // 'ingest' | 'scoring' | 'engine' | 'report'
+  step: text('step').notNull(),           // 'fetch_coingecko' | 'score_regime' | 'tier_decision' etc.
+  category: text('category').notNull(),   // 'api_call' | 'computation' | 'decision' | 'upsert'
+  detail: text('detail').notNull(),       // JSON — inputs, outputs, reasoning
+  durationMs: integer('duration_ms'),
+});

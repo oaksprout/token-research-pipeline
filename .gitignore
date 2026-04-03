@@ -2,4 +2,7 @@ node_modules/
 dist/
 outputs/
 .env
+.env.local
 *.log
+web/.next/
+web/node_modules/

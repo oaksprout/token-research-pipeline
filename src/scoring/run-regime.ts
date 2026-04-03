@@ -9,6 +9,7 @@ import {
   scoreAltStrength,
   computeRegimeScore,
 } from './regime.js';
+import { trace } from '../lib/trace.js';
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -137,7 +138,7 @@ export async function scoreRegime(): Promise<void> {
 
   // ─── Compute sub-scores ───────────────────────────────────────────
 
-  const subStructure = scoreMarketStructure({
+  const structureInput = {
     btcPrice: latestMarket.btcPrice!,
     btcSma20: latestMarket.btcSma20 ?? latestMarket.btcPrice!,
     btcSma50: latestMarket.btcSma50 ?? latestMarket.btcPrice!,
@@ -145,29 +146,57 @@ export async function scoreRegime(): Promise<void> {
     weeklyLows4w,
     week52Low,
     week52High,
+  };
+  const subStructure = scoreMarketStructure(structureInput);
+
+  await trace('scoring', 'regime_market_structure', 'computation', {
+    input: structureInput,
+    nullSmas: { sma20: latestMarket.btcSma20 == null, sma50: latestMarket.btcSma50 == null, sma200: latestMarket.btcSma200 == null },
+    output: subStructure,
+    reasoning: subStructure === 0 ? 'All SMAs null (first run) — defaulting to price, so no above/below signal' : undefined,
   });
 
-  const subLeverage = scoreLeverageStress({
+  const leverageInput = {
     fundingRateAvg7d: latestFlows?.fundingRateAvg ?? null,
-    oiChangePct7d: latestFlows?.oiChangePct24h ?? null, // approximation in v1
+    oiChangePct7d: latestFlows?.oiChangePct24h ?? null,
     liquidationsLong24h: latestFlows?.liquidationsLong24h ?? null,
     liquidationsShort24h: latestFlows?.liquidationsShort24h ?? null,
+  };
+  const subLeverage = scoreLeverageStress(leverageInput);
+
+  await trace('scoring', 'regime_leverage_stress', 'computation', {
+    input: leverageInput,
+    output: subLeverage,
   });
 
-  const flowResult = scoreFlowSupport({
+  const flowInput = {
     etfNetFlowDaily: latestFlows?.etfNetFlowDaily ?? null,
     stablecoinChange7d: latestFlows?.stablecoinChange7d ?? null,
     stablecoinAccelerating,
     exchangeNetflowBtc: latestFlows?.exchangeNetflowBtc ?? null,
+  };
+  const flowResult = scoreFlowSupport(flowInput);
+
+  await trace('scoring', 'regime_flow_support', 'computation', {
+    input: flowInput,
+    output: flowResult,
+    reasoning: !flowResult.etfDataAvailable ? 'No ETF flow data available — ETF contribution = 0' : undefined,
   });
 
-  const subOnchain = scoreOnchainStress({
+  const onchainInput = {
     btcPrice: latestMarket.btcPrice!,
     btcAth,
     btcRsi14: latestMarket.btcRsi14 ?? null,
+  };
+  const subOnchain = scoreOnchainStress(onchainInput);
+
+  await trace('scoring', 'regime_onchain_stress', 'computation', {
+    input: onchainInput,
+    athRatio: latestMarket.btcPrice! / btcAth,
+    output: subOnchain,
   });
 
-  const subAltStr = scoreAltStrength({
+  const altInput = {
     ethBtcAboveSma:
       latestMarket.ethBtcRatio != null &&
       latestMarket.ethBtcRatioSma20 != null &&
@@ -178,6 +207,14 @@ export async function scoreRegime(): Promise<void> {
       latestMarket.solBtcRatio > latestMarket.solBtcRatioSma20,
     ethBtcRising3w: ethBtcRising3w && !ethBtcFalling3w,
     solBtcRising3w: solBtcRising3w && !solBtcFalling3w,
+  };
+  const subAltStr = scoreAltStrength(altInput);
+
+  await trace('scoring', 'regime_alt_strength', 'computation', {
+    input: altInput,
+    nullRatioSmas: { ethBtcSma20: latestMarket.ethBtcRatioSma20 == null, solBtcSma20: latestMarket.solBtcRatioSma20 == null },
+    output: subAltStr,
+    reasoning: subAltStr === -20 ? 'All alt strength signals negative — ratio SMAs null means above_sma defaults to false' : undefined,
   });
 
   // ─── Compute total ────────────────────────────────────────────────
@@ -189,6 +226,20 @@ export async function scoreRegime(): Promise<void> {
     subOnchain,
     subAltStrength: subAltStr,
     etfDataAvailable: flowResult.etfDataAvailable,
+  });
+
+  await trace('scoring', 'regime_total', 'computation', {
+    subScores: { subStructure, subLeverage, subFlows: flowResult.score, subOnchain, subAltStrength: subAltStr },
+    result: { scoreTotal: result.scoreTotal, label: result.label, confidence: result.confidence, sizingImplication: result.sizingImplication },
+    dataCompleteness: {
+      hasSmas: latestMarket.btcSma20 != null,
+      hasRsi: latestMarket.btcRsi14 != null,
+      hasEtf: flowResult.etfDataAvailable,
+      hasStablecoinChange: latestFlows?.stablecoinChange7d != null,
+      hasRatioSmas: latestMarket.ethBtcRatioSma20 != null,
+      weeklyLowsCount: weeklyLows4w.length,
+      historicalDays: allPrices.length,
+    },
   });
 
   // ─── Upsert ───────────────────────────────────────────────────────
