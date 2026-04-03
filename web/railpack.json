@@ -1,0 +1,5 @@
+{
+  "builder": "node",
+  "buildCommand": "npm run build",
+  "startCommand": "node .next/standalone/server.js"
+}
