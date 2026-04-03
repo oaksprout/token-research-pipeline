@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { InfoTip } from '@/components/info-tip';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function bucketVariant(bucket: string | null | undefined): 'default' | 'secondary' | 'outline' {
@@ -42,12 +43,12 @@ export default async function PortfolioPage() {
                 <TableRow>
                   <TableHead>Symbol</TableHead>
                   <TableHead>Bucket</TableHead>
-                  <TableHead className="text-right">Current %</TableHead>
-                  <TableHead className="text-right">Target %</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Reason</TableHead>
-                  <TableHead>Confidence</TableHead>
-                  <TableHead>Blocked</TableHead>
+                  <TableHead className="text-right"><InfoTip term="currentPct">Current %</InfoTip></TableHead>
+                  <TableHead className="text-right"><InfoTip term="targetPct">Target %</InfoTip></TableHead>
+                  <TableHead><InfoTip term="proposedAction">Action</InfoTip></TableHead>
+                  <TableHead><InfoTip term="reasonCode">Reason</InfoTip></TableHead>
+                  <TableHead><InfoTip term="confidence">Confidence</InfoTip></TableHead>
+                  <TableHead><InfoTip term="executionBlocked">Blocked</InfoTip></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

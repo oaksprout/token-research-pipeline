@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { InfoTip } from "@/components/info-tip";
 
 export default async function DashboardPage() {
   const [market, regime, sectors, actions] = await Promise.all([
@@ -40,6 +41,16 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* First-run data quality notice */}
+      {market && market.btcSma200 == null && (
+        <Card className="border-yellow-800 bg-yellow-950/30">
+          <CardContent className="pt-4 text-sm text-yellow-300">
+            First-run data: some indicators require historical accumulation.{" "}
+            <InfoTip term="firstRunWarning">Learn more</InfoTip>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Market Header */}
       <section>
         <h2 className="mb-3 text-sm font-medium uppercase tracking-wider text-zinc-500">
@@ -68,7 +79,7 @@ export default async function DashboardPage() {
       {/* Regime Status */}
       <section>
         <h2 className="mb-3 text-sm font-medium uppercase tracking-wider text-zinc-500">
-          Regime
+          <InfoTip term="regime">Regime</InfoTip>
         </h2>
         {regime ? (
           <Card>
@@ -77,16 +88,16 @@ export default async function DashboardPage() {
                 <Badge variant={regimeBadgeVariant(regime.label)}>
                   {regime.label}
                 </Badge>
-                <Badge variant="outline">{regime.confidence ?? "—"} confidence</Badge>
+                <Badge variant="outline"><InfoTip term="confidence">{regime.confidence ?? "—"}</InfoTip> confidence</Badge>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
                 <span className="text-3xl font-bold tabular-nums text-zinc-100">
-                  {formatScore(regime.scoreTotal)}
+                  <InfoTip term="regimeScore">{formatScore(regime.scoreTotal)}</InfoTip>
                 </span>
                 <span className="text-sm text-zinc-400">
-                  {regime.sizingImplication}
+                  <InfoTip term="sizingImplication">{regime.sizingImplication}</InfoTip>
                 </span>
                 <span className="ml-auto text-xs text-zinc-600">
                   {formatDate(regime.date)}
@@ -111,9 +122,9 @@ export default async function DashboardPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Sector</TableHead>
-                    <TableHead className="text-right">Score</TableHead>
+                    <TableHead className="text-right"><InfoTip term="sectorScore">Score</InfoTip></TableHead>
                     <TableHead className="text-right">Delta 4w</TableHead>
-                    <TableHead>Tier</TableHead>
+                    <TableHead><InfoTip term="tierCandidate">Tier</InfoTip></TableHead>
                     <TableHead>Leader</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -166,9 +177,9 @@ export default async function DashboardPage() {
                   <TableRow>
                     <TableHead>Symbol</TableHead>
                     <TableHead>Bucket</TableHead>
-                    <TableHead>Action</TableHead>
-                    <TableHead className="text-right">Current %</TableHead>
-                    <TableHead className="text-right">Target %</TableHead>
+                    <TableHead><InfoTip term="proposedAction">Action</InfoTip></TableHead>
+                    <TableHead className="text-right"><InfoTip term="currentPct">Current %</InfoTip></TableHead>
+                    <TableHead className="text-right"><InfoTip term="targetPct">Target %</InfoTip></TableHead>
                     <TableHead>Reason</TableHead>
                     <TableHead>Confidence</TableHead>
                   </TableRow>

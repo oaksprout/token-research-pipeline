@@ -4,13 +4,14 @@ import { getLatestRegime } from "@/lib/queries";
 import { formatScore, formatDate, regimeBadgeVariant } from "@/lib/format";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { InfoTip } from "@/components/info-tip";
 
 const SUB_SCORES = [
-  { key: "subStructure", label: "Market Structure" },
-  { key: "subLeverage", label: "Leverage Stress" },
-  { key: "subFlows", label: "Flow Support" },
-  { key: "subOnchain", label: "On-Chain Stress" },
-  { key: "subAltStrength", label: "Alt Relative Strength" },
+  { key: "subStructure", label: "Market Structure", term: "marketStructure" },
+  { key: "subLeverage", label: "Leverage Stress", term: "leverageStress" },
+  { key: "subFlows", label: "Flow Support", term: "flowSupport" },
+  { key: "subOnchain", label: "On-Chain Stress", term: "onchainStress" },
+  { key: "subAltStrength", label: "Alt Relative Strength", term: "altStrength" },
 ] as const;
 
 function ScoreBar({ value }: { value: number | null | undefined }) {
@@ -59,10 +60,10 @@ export default async function RegimePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <Badge variant={regimeBadgeVariant(regime.label)}>
-              {regime.label ?? "unknown"}
+              <InfoTip term="regime">{regime.label ?? "unknown"}</InfoTip>
             </Badge>
             <span className="text-xl tabular-nums">
-              {formatScore(regime.scoreTotal)}
+              <InfoTip term="regimeScore">{formatScore(regime.scoreTotal)}</InfoTip>
             </span>
           </CardTitle>
         </CardHeader>
@@ -70,14 +71,14 @@ export default async function RegimePage() {
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-4">
             <div>
               <span className="text-muted-foreground">Sizing</span>
-              <p className="font-medium">{regime.sizingImplication ?? "---"}</p>
+              <p className="font-medium"><InfoTip term="sizingImplication">{regime.sizingImplication ?? "---"}</InfoTip></p>
             </div>
             <div>
               <span className="text-muted-foreground">Confidence</span>
-              <p className="font-medium">{regime.confidence ?? "---"}</p>
+              <p className="font-medium"><InfoTip term="confidence">{regime.confidence ?? "---"}</InfoTip></p>
             </div>
             <div>
-              <span className="text-muted-foreground">ETF Data</span>
+              <span className="text-muted-foreground"><InfoTip term="etfDataAvailable">ETF Data</InfoTip></span>
               <p className="font-medium">
                 {regime.etfDataAvailable ? "Yes" : "No"}
               </p>
@@ -92,11 +93,11 @@ export default async function RegimePage() {
           <CardTitle>Sub-Scores</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {SUB_SCORES.map(({ key, label }) => {
+          {SUB_SCORES.map(({ key, label, term }) => {
             const val = regime[key];
             return (
               <div key={key} className="grid grid-cols-[160px_1fr_48px] items-center gap-3">
-                <span className="text-sm text-muted-foreground">{label}</span>
+                <span className="text-sm text-muted-foreground"><InfoTip term={term}>{label}</InfoTip></span>
                 <ScoreBar value={val} />
                 <span className="text-right text-sm tabular-nums font-medium">
                   {formatScore(val)}

@@ -7,6 +7,7 @@ import {
   getLatestTokenScores,
 } from "@/lib/queries";
 import { formatScore } from "@/lib/format";
+import { InfoTip } from "@/components/info-tip";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -39,15 +40,15 @@ export default async function SectorsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Sector</TableHead>
-                <TableHead className="text-right">Score</TableHead>
-                <TableHead className="text-right">Dev</TableHead>
-                <TableHead className="text-right">Usage</TableHead>
-                <TableHead className="text-right">Funding</TableHead>
-                <TableHead className="text-right">Narrative</TableHead>
-                <TableHead className="text-right">RS</TableHead>
-                <TableHead>Filter</TableHead>
-                <TableHead>Validation</TableHead>
-                <TableHead>Tier</TableHead>
+                <TableHead className="text-right"><InfoTip term="sectorScore">Score</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subDev">Dev</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subUsage">Usage</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subFunding">Funding</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subNarrative">Narrative</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subRs">RS</InfoTip></TableHead>
+                <TableHead><InfoTip term="structuralFilter">Filter</InfoTip></TableHead>
+                <TableHead><InfoTip term="validation">Validation</InfoTip></TableHead>
+                <TableHead><InfoTip term="tierCandidate">Tier</InfoTip></TableHead>
                 <TableHead>Leader</TableHead>
               </TableRow>
             </TableHeader>
@@ -157,14 +158,14 @@ export default async function SectorsPage() {
               <TableRow>
                 <TableHead>Symbol</TableHead>
                 <TableHead>Sector</TableHead>
-                <TableHead className="text-right">Score</TableHead>
-                <TableHead className="text-right">Rank</TableHead>
-                <TableHead className="text-right">Liquidity</TableHead>
-                <TableHead className="text-right">RS</TableHead>
-                <TableHead className="text-right">Structure</TableHead>
-                <TableHead className="text-right">Volume</TableHead>
-                <TableHead className="text-right">Valuation</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="text-right"><InfoTip term="tokenScore">Score</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="rankInSector">Rank</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subLiquidity">Liquidity</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="tokenSubRs">RS</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subStructure">Structure</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subVolume">Volume</InfoTip></TableHead>
+                <TableHead className="text-right"><InfoTip term="subValuation">Valuation</InfoTip></TableHead>
+                <TableHead><InfoTip term="candidateStatus">Status</InfoTip></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
