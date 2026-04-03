@@ -180,6 +180,14 @@ export const runLog = pgTable('run_log', {
   errors: text('errors'),
 });
 
+export const llmAnalysisWeekly = pgTable('llm_analysis_weekly', {
+  date: text('date').primaryKey(),
+  regimeAnalysis: text('regime_analysis'),         // JSON: RegimeLlmAnalysis
+  sectorAnalysis: text('sector_analysis'),         // JSON: SectorLlmAnalysis[]
+  portfolioAnalysis: text('portfolio_analysis'),   // JSON: PortfolioLlmAnalysis
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const runTrace = pgTable('run_trace', {
   id: uuid('id').primaryKey().defaultRandom(),
   runId: uuid('run_id').notNull(),
