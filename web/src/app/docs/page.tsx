@@ -68,26 +68,32 @@ export default function DocsPage() {
         <Card>
           <CardContent className="pt-4">
             <p className="mb-3 text-sm text-zinc-400">
-              Data flows through two scheduled jobs, with an optional LLM
-              interpretation layer at the end.
+              Data flows through two scheduled jobs. The weekly pipeline uses a
+              three-phase architecture: deterministic scoring, LLM enrichment,
+              then decision engine.
             </p>
             <pre className="overflow-x-auto rounded-lg bg-zinc-950 p-4 font-mono text-xs leading-relaxed text-zinc-300 ring-1 ring-zinc-800">
 {`Daily Ingest (7 AM)
-  ├─ Market data    (prices, dominance, funding, OI)
-  ├─ Sector metrics (TVL, fees, dev commits)
-  └─ Wallet positions (Zerion)
+  ├─ Market data      CoinGecko, Binance, DefiLlama
+  ├─ Sector metrics   TVL, fees, dev commits
+  └─ Wallet positions Zerion (3 addresses)
 
 Weekly Scoring (Sundays 8 AM)
-  ├─ 1. Regime scoring
-  ├─ 2. Sector scoring
-  ├─ 3. Token scoring
-  ├─ 4. Tier rules & recommendations
-  ├─ 5. Portfolio actions
-  └─ 6. Report generation
-
-Optional: LLM Review
-  └─ GPT-4o interprets the structured output
-     (regime review, sector review, portfolio briefing)`}
+  ┌─ Phase 1: Deterministic Scoring
+  │  ├─ Regime scoring    (5 sub-scores from market data)
+  │  ├─ Sector scoring    (5 sub-scores from TVL/returns/dev)
+  │  └─ Token scoring     (5 sub-scores from price/volume/valuation)
+  │
+  ├─ Phase 2: LLM Enrichment (via Codex CLI)
+  │  ├─ Regime analysis   validates label, flags unseen risks
+  │  ├─ Sector analysis   REPLACES narrative + funding sub-scores
+  │  └─ Portfolio analysis evaluates each thesis, recommends actions
+  │
+  └─ Phase 3: Decision Engine (uses LLM-enriched scores)
+     ├─ Tier rules        promotion/demotion state machine
+     ├─ Portfolio actions  per-holding action generation
+     ├─ Reports           deterministic markdown tables
+     └─ Context bundle    assembled for review`}
             </pre>
           </CardContent>
         </Card>
@@ -204,13 +210,13 @@ Optional: LLM Review
                     <Td className="font-mono text-xs">0-20</Td>
                   </tr>
                   <tr>
-                    <Td className="font-medium text-zinc-200">Funding</Td>
-                    <Td>{glossary.subFunding.short}</Td>
+                    <Td className="font-medium text-zinc-200">Funding <Badge variant="default" className="ml-2 text-[10px]">LLM</Badge></Td>
+                    <Td>LLM-assessed funding activity. Replaces the deterministic default (which had no automated data source and defaulted to neutral).</Td>
                     <Td className="font-mono text-xs">0-20</Td>
                   </tr>
                   <tr>
-                    <Td className="font-medium text-zinc-200">Narrative</Td>
-                    <Td>{glossary.subNarrative.short}</Td>
+                    <Td className="font-medium text-zinc-200">Narrative <Badge variant="default" className="ml-2 text-[10px]">LLM</Badge></Td>
+                    <Td>LLM-assessed narrative momentum. Replaces the deterministic proxy (which used 7d price return as a circular stand-in for sentiment).</Td>
                     <Td className="font-mono text-xs">0-20</Td>
                   </tr>
                   <tr>
@@ -371,9 +377,89 @@ Optional: LLM Review
 
       <Separator />
 
-      {/* ── 6. Portfolio Actions ───────────────────────────────────── */}
+      {/* ── 6. LLM Enrichment ────────────────────────────────────── */}
       <section className="space-y-3">
-        <SectionHeading id="portfolio" number="06" title="Portfolio Actions" />
+        <SectionHeading id="llm" number="06" title="LLM Enrichment" />
+        <Card>
+          <CardHeader>
+            <CardTitle>Three LLM analysis steps run between deterministic scoring and the decision engine</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-sm text-zinc-400">
+              The LLM is called via <span className="font-mono text-zinc-300">codex exec</span> (headless Codex CLI)
+              using the user&apos;s authenticated session. Every call is fully traced: the exact prompt sent,
+              the full response received, token usage, and how it changed the scores.
+            </p>
+
+            <div className="space-y-4">
+              <div className="rounded-lg bg-zinc-950 p-4 ring-1 ring-zinc-800">
+                <h4 className="text-sm font-medium text-blue-400">1. Regime Analysis</h4>
+                <p className="mt-2 text-sm text-zinc-400">
+                  Given the 5 sub-scores and current market prices, the LLM assesses whether
+                  the deterministic label (deteriorating/stabilising/improving) is correct.
+                  It can flag disagreement and suggest an override. More importantly, it
+                  identifies risk factors the quantitative model cannot see: regulatory
+                  developments, macro events, protocol-specific risks, positioning cascades.
+                </p>
+                <div className="mt-2 text-xs text-zinc-500">
+                  Output: narrative assessment, risk flags, label agreement, confidence adjustment, reasoning
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-zinc-950 p-4 ring-1 ring-zinc-800">
+                <h4 className="text-sm font-medium text-blue-400">2. Sector Analysis</h4>
+                <p className="mt-2 text-sm text-zinc-400">
+                  The LLM <strong className="text-zinc-200">replaces</strong> two deterministic sub-scores that were
+                  previously unreliable:
+                </p>
+                <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-zinc-400">
+                  <li><span className="text-zinc-200">Narrative (0-20)</span> &mdash; was using 7d price return as a
+                    circular proxy. LLM assesses actual buzz, developer interest, institutional attention, media coverage.</li>
+                  <li><span className="text-zinc-200">Funding (0-20)</span> &mdash; was defaulting to 8 (neutral) with no
+                    automated source. LLM assesses known funding rounds, grants, and capital inflows.</li>
+                </ul>
+                <p className="mt-2 text-sm text-zinc-400">
+                  This typically shifts sector scores by 10-20 points. For example, AI Agent moved from
+                  49 to 67 because the LLM recognises genuine narrative momentum that 7d returns don&apos;t capture.
+                </p>
+                <div className="mt-2 text-xs text-zinc-500">
+                  Output per sector: narrative score, funding score, thesis notes, risks, catalysts
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-zinc-950 p-4 ring-1 ring-zinc-800">
+                <h4 className="text-sm font-medium text-blue-400">3. Portfolio Analysis</h4>
+                <p className="mt-2 text-sm text-zinc-400">
+                  Evaluates whether each holding&apos;s thesis is still valid given current market
+                  conditions. Returns a conviction delta (-2 to +2) per holding and 5 concrete
+                  actions for the week. Actions are specific (&ldquo;Sell LDO at market&rdquo;),
+                  not vague (&ldquo;consider trimming&rdquo;).
+                </p>
+                <div className="mt-2 text-xs text-zinc-500">
+                  Output: per-holding thesis evaluation, conviction delta, risk factors, top 5 actions, overall assessment
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h4 className="text-sm font-medium text-zinc-200">Traceability</h4>
+              <p className="mt-1 text-sm text-zinc-400">
+                Every LLM call is persisted to the <span className="font-mono text-zinc-300">run_trace</span> table
+                and the <span className="font-mono text-zinc-300">llm_analysis_weekly</span> table.
+                The trace viewer at <span className="font-mono text-zinc-300">/runs/[id]</span> shows
+                the full prompt, the model&apos;s response, token usage, and the before/after effect on scores.
+                All LLM analysis is also stored as structured JSON for programmatic access.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      <Separator />
+
+      {/* ── 7. Portfolio Actions ───────────────────────────────────── */}
+      <section className="space-y-3">
+        <SectionHeading id="portfolio" number="07" title="Portfolio Actions" />
         <Card>
           <CardHeader>
             <CardTitle>Three bucket types</CardTitle>
@@ -414,9 +500,9 @@ Optional: LLM Review
 
       <Separator />
 
-      {/* ── 7. Data Sources ───────────────────────────────────────── */}
+      {/* ── 8. Data Sources ───────────────────────────────────────── */}
       <section className="space-y-3">
-        <SectionHeading id="sources" number="07" title="Data Sources" />
+        <SectionHeading id="sources" number="08" title="Data Sources" />
         <Card>
           <CardContent className="pt-4">
             <div className="overflow-x-auto">
@@ -463,21 +549,20 @@ Optional: LLM Review
 
       <Separator />
 
-      {/* ── 8. Data Quality / Known Limitations ───────────────────── */}
+      {/* ── 9. Data Quality / Known Limitations ───────────────────── */}
       <section className="space-y-3">
-        <SectionHeading id="limitations" number="08" title="Data Quality / Known Limitations" />
+        <SectionHeading id="limitations" number="09" title="Data Quality / Known Limitations" />
         <Card>
           <CardContent className="pt-4">
             <ul className="space-y-3 text-sm text-zinc-400">
               <li className="flex gap-2">
-                <span className="mt-0.5 text-amber-500">&#9679;</span>
+                <span className="mt-0.5 text-emerald-500">&#9679;</span>
                 <div>
-                  <span className="font-medium text-zinc-200">First-run degradation</span>
+                  <span className="font-medium text-zinc-200">Historical data backfill</span>
                   <p className="mt-0.5">
-                    SMAs need 20-200 days, RSI needs 15 days, stablecoin 7d
-                    change needs a week, score deltas need 4 weeks. On the first
-                    run, many indicators are null and scores are partially
-                    informed.
+                    200 days of BTC/ETH/SOL history is backfilled from CoinGecko
+                    on first setup. SMAs, RSI, and ratio indicators are
+                    immediately available. No accumulation wait required.
                   </p>
                 </div>
               </li>
@@ -503,12 +588,14 @@ Optional: LLM Review
                 </div>
               </li>
               <li className="flex gap-2">
-                <span className="mt-0.5 text-amber-500">&#9679;</span>
+                <span className="mt-0.5 text-emerald-500">&#9679;</span>
                 <div>
-                  <span className="font-medium text-zinc-200">Funding data defaults to neutral</span>
+                  <span className="font-medium text-zinc-200">Sector funding &amp; narrative now LLM-enriched</span>
                   <p className="mt-0.5">
-                    If Binance funding rate data is unavailable, the leverage
-                    stress sub-score treats funding as neutral (0 contribution).
+                    The sector funding and narrative sub-scores were previously
+                    stubbed (neutral default / price proxy). These are now
+                    replaced by LLM qualitative assessment during the enrichment
+                    phase. Typical score impact: 10-20 points per sector.
                   </p>
                 </div>
               </li>
@@ -541,9 +628,9 @@ Optional: LLM Review
 
       <Separator />
 
-      {/* ── 9. Glossary ───────────────────────────────────────────── */}
+      {/* ── 10. Glossary ──────────────────────────────────────────── */}
       <section className="space-y-3">
-        <SectionHeading id="glossary" number="09" title="Glossary" />
+        <SectionHeading id="glossary" number="10" title="Glossary" />
         <Card>
           <CardContent className="pt-4">
             <dl>
