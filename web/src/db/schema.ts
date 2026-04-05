@@ -166,6 +166,29 @@ export const portfolioActionsWeekly = pgTable(
   (t) => [primaryKey({ columns: [t.date, t.symbol] })],
 );
 
+export const taxLots = pgTable('tax_lots', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  symbol: text('symbol').notNull(),
+  quantity: real('quantity').notNull(),
+  costBasis: real('cost_basis').notNull(),
+  costPerUnit: real('cost_per_unit').notNull(),
+  acquiredAt: text('acquired_at').notNull(),
+  disposedAt: text('disposed_at'),
+  proceeds: real('proceeds'),
+  gainLoss: real('gain_loss'),
+  source: text('source'),
+  koinlyTxnId: text('koinly_txn_id'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export const llmAnalysisWeekly = pgTable('llm_analysis_weekly', {
+  date: text('date').primaryKey(),
+  regimeAnalysis: text('regime_analysis'),
+  sectorAnalysis: text('sector_analysis'),
+  portfolioAnalysis: text('portfolio_analysis'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const runLog = pgTable('run_log', {
   id: uuid('id').primaryKey().defaultRandom(),
   script: text('script').notNull(),

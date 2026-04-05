@@ -180,6 +180,21 @@ export const runLog = pgTable('run_log', {
   errors: text('errors'),
 });
 
+export const taxLots = pgTable('tax_lots', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  symbol: text('symbol').notNull(),
+  quantity: real('quantity').notNull(),
+  costBasis: real('cost_basis').notNull(),
+  costPerUnit: real('cost_per_unit').notNull(),
+  acquiredAt: text('acquired_at').notNull(),
+  disposedAt: text('disposed_at'),
+  proceeds: real('proceeds'),
+  gainLoss: real('gain_loss'),
+  source: text('source'),
+  koinlyTxnId: text('koinly_txn_id'),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const llmAnalysisWeekly = pgTable('llm_analysis_weekly', {
   date: text('date').primaryKey(),
   regimeAnalysis: text('regime_analysis'),         // JSON: RegimeLlmAnalysis
