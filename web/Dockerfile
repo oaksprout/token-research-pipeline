@@ -9,6 +9,8 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY web/ .
+COPY portfolio.yaml /app/portfolio.yaml
+COPY configs/ /app/configs/
 RUN npm run build
 
 FROM base AS runner
@@ -19,6 +21,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/portfolio.yaml ./portfolio.yaml
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000

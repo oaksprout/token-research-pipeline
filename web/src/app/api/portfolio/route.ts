@@ -30,8 +30,9 @@ interface PortfolioYaml {
 
 function loadPortfolio(): PortfolioYaml | null {
   const candidates = [
-    resolve(process.cwd(), '..', 'portfolio.yaml'),
     resolve(process.cwd(), 'portfolio.yaml'),
+    resolve(process.cwd(), '..', 'portfolio.yaml'),
+    '/app/portfolio.yaml',
   ];
   for (const p of candidates) {
     if (existsSync(p)) {
